@@ -2,10 +2,10 @@
 
 const accountRouter = require('./account-router');
 const userRouter = require('./user-router');
-const postRouter = require('./post-router');
+const puaRouter = require('./pua-router');
 
 module.exports = {
   accountRouter,
   userRouter,
-  postRouter,
+  puaRouter,
 };

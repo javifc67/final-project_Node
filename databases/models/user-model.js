@@ -13,11 +13,9 @@ const userSchema = new Schema({
   fullName: String,
   password: String,
   email: String,
-  secundaryMail: [{
-    secundaryMail: String,
+  secondaryMail: [{
+    secondaryMail: String,
   }],
-  createdAt: Date,
-  confirmedAt: Date,
 });
 
 userSchema.index(

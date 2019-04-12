@@ -14,12 +14,10 @@ app.use(bodyParser.json());
  */
 app.use((req, res, next) => {
   const accessControlAllowMethods = [
-    // fill the methods
-  ];
+    'POST', 'GET', 'PUT', 'DELETE', 'OPTIONS'];
 
   const accessControlAllowHeaders = [
-    // fill the headers
-  ];
+    'Location', 'Authorization', 'Content-Type'];
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Credentials', 'true');
@@ -27,6 +25,7 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Methods', accessControlAllowMethods.join(','));
   // put accessControlAllowHeaders separated by comma
   res.header('Access-Control-Allow-Headers', accessControlAllowHeaders.join(','));
+  res.header('Access-Control-Expose-Headers', accessControlAllowHeaders.join(','));
   next();
 });
 
@@ -35,7 +34,7 @@ app.use((req, res, next) => {
  */
 app.use('/api', routes.accountRouter);
 app.use('/api', routes.userRouter);
-app.use('/api', routes.postRouter);
+app.use('/api', routes.puaRouter);
 
 app.use('*', (req, res, next) => {
   return res.status(404).send({

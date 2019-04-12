@@ -1,16 +1,13 @@
 'use strict';
 
-const UserModel = require('../../../databases/models/user-models');
+const UserModel = require('../../../databases/models/user-model');
 
 async function getUserProfile(req, res, next) {
-  const { claims } = req;
+  const { uuid } = req.claims;
 
-  try {
-    const data = await UserModel.findOne({ uuid: claims.uuid }, '-_id -__v').lean(true);
-    return res.status(200).send(data);
-  } catch (err) {
-    return res.status(401).send(err.message);
-  }
+  const userProfile = await UserModel.findOne({ uuid });
+
+  return res.status(200).send(userProfile);
 }
 
 module.exports = getUserProfile;

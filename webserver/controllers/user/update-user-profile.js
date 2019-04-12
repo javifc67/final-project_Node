@@ -3,26 +3,24 @@
 const dot = require('dot-object');
 const Joi = require('joi');
 
-const UserModel = require('../../../databases/models/user-models');
+const UserModel = require('../../../databases/models/user-model');
 
 async function validate(payload) {
   const schema = {
     fullName: Joi.string().min(3).max(128).required(),
-    preferences: Joi.object().keys({
-      isPublicProfile: Joi.bool().required(),
-      linkedIn: Joi.string().allow(null),
-      twitter: Joi.string().allow(null),
-      github: Joi.string().uri().allow(null),
-      description: Joi.string().allow(null),
-    }),
+    email: Joi.string().min(3).max(128).required(),
+    password: Joi.string().min(3).max(128).required(),
   };
 
   return Joi.validate(payload, schema);
 }
+
 async function updateUserProfile(req, res, next) {
   const userDataProfile = { ...req.body };
   const { claims } = req;
-
+  /**
+   * 1. validator datos
+   */
   try {
     await validate(userDataProfile);
   } catch (e) {

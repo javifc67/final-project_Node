@@ -1,6 +1,6 @@
 'use strict';
 
-const mysqlPool = require('../../../databases/mysql-pool');
+const AccountModel = require('../../../databases/models/account-model');
 
 async function activate(req, res, next) {
   const { verification_code: verificationCode } = req.query;
@@ -12,39 +12,26 @@ async function activate(req, res, next) {
     });
   }
 
-  const now = new Date();
-  const sqlActivateQuery = `UPDATE users_activation
-SET verified_at = '${now.toISOString().substring(0, 19).replace('T', ' ')}'
-WHERE verification_code='${verificationCode}'
-AND verified_at IS NULL`;
-
+// TODO: no poder activar la cuenta varias veces
   try {
-    const connection = await mysqlPool.getConnection();
-    const result = await connection.query(sqlActivateQuery);
+    const now = new Date();
+    const verifiedAt = now.toISOString().substring(0, 19).replace('T', ' ');
+    // update account to add the verified at date
+    const filter = {
+      verificationCode,
+      confirmedAt: null,
+    };
 
-    if (result[0].affectedRows === 1) {
-      const sqlActivateUserQuery = `UPDATE users u
-      JOIN users_activation uv
-      ON u.uuid = uv.user_uuid
-      AND u.activated_at IS NULL
-      AND uv.verification_code = '${verificationCode}'
-      SET u.activated_at = uv.verified_at`;
+    const op = {
+      $set: {
+        confirmedAt: verifiedAt,
+      },
+    };
 
-      const resultActivateUser = await connection.query(sqlActivateUserQuery);
-      if (resultActivateUser[0].affectedRows === 1) {
-        return res.send('account activated');
-      }
-      /*
-      connection.query(sqlActivateUserQuery).then((resultActivateUSer) => {
+    await AccountModel.findOneAndUpdate(filter, op);
 
-      }).catch((err) => {
-
-      });
-      */
-    }
-
-    // algo no fue ok
-    return res.send('verification code invalid');
+    return next();
+    // res.send('account activated');
   } catch (e) {
     return res.status(500).send(e.message);
   }
