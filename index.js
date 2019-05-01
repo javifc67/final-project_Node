@@ -4,8 +4,6 @@ require('dotenv').config();
 const webServer = require('./webserver');
 const httpServerConfig = require('./config/http-server-config');
 const mongoPool = require('./databases/mongo-pool');
-// const mongoPool = require('./app/domain/builders/mongo-pool-builder');
-
 /**
  * Initialize dependencies
  * */

@@ -39,10 +39,10 @@ async function insertUserAccount(email, password) {
   }
 }
 
-async function insertPua(uuid) {
+async function insertPua(uuid, twitterName) {
   const data = {
     uuid,
-
+    twitterName,
   };
   try {
     await PuaModel.create(data);
@@ -60,6 +60,7 @@ async function validate(payload) {
     email: Joi.string().email({ minDomainAtoms: 2 }).required(),
     password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/).required(),
     fullName: Joi.string().min(3).max(64).required(),
+    twitterName: Joi.string().min(3).max(64).required(),
   };
 
   return Joi.validate(payload, schema);
@@ -102,7 +103,7 @@ async function sendEmailRegistration(userEmail) {
 
 async function createAccount(req, res, next) {
   const accountData = { ...req.body };
-  console.log('accountdata', accountData);
+
   // Validate user data or send 400 bad request err
 
   try {
@@ -115,8 +116,9 @@ async function createAccount(req, res, next) {
     email,
     password,
     fullName,
+    twitterName,
   } = accountData;
-
+  const twitterNameFormated = twitterName.replace('@', '');
   try {
     // Create the account and send the OK response
     const uuid = await insertUserAccount(email, password);
@@ -127,7 +129,7 @@ async function createAccount(req, res, next) {
 
     await createUser(uuid, email, password, fullName);
 
-    await insertPua(uuid);
+    await insertPua(uuid, twitterNameFormated);
 
     // Generate verification code and send email
 

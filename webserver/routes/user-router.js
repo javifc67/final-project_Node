@@ -2,7 +2,7 @@
 
 const express = require('express');
 
-const getUserProfile = require('../controllers/user/get-user-profile');
+const { getUserProfile } = require('../controllers/user/get-user-profile');
 const checkJwtToken = require('../controllers/session/check-jwt-token');
 const updateUserProfile = require('../controllers/user/update-user-profile');
 

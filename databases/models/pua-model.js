@@ -3,31 +3,31 @@
 const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
+const { ObjectId } = Schema;
 
 const puaSchema = new Schema({
   uuid: {
     type: String,
     unique: true,
   },
+  twitterName: String,
   puas: {
     type: Array,
     default: [{
-      name: 'instagram',
-      url: 'https://www.instagram.com/?hl=es',
-      mailUser: '',
-      password: '',
+      name: 'twitter',
+      url: 'https://twitter.com',
+      token: '',
+      tokenSecret: '',
       visitCount: 0,
-      createdAt: null,
-      confirmedAt: null,
+      userInfo: [ObjectId],
     },
     {
-      name: 'linkedin',
-      url: 'https://www.linkedin.com',
-      mailUser: '',
-      password: '',
+      name: 'facebook',
+      url: 'https://www.facebook.com',
+      token: '',
+      tokenSecret: '',
       visitCount: 0,
-      createdAt: null,
-      confirmedAt: null,
+      userInfo: [ObjectId],
     }],
   },
 

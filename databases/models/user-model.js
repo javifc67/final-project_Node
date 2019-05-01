@@ -9,23 +9,9 @@ const userSchema = new Schema({
     type: String,
     unique: true,
   },
-  avatarurl: String,
   fullName: String,
-  password: String,
   email: String,
-  secondaryMail: [{
-    secondaryMail: String,
-  }],
 });
-
-userSchema.index(
-  {
-    fullName: 'text',
-    'preferences.linkedin': 'text',
-    'preferences.github': 'text',
-    'preferences.twitter': 'text',
-  },
-);
 
 const User = mongoose.model('User', userSchema);
 

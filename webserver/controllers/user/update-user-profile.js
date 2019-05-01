@@ -2,8 +2,10 @@
 
 const dot = require('dot-object');
 const Joi = require('joi');
+const bcrypt = require('bcrypt');
 
 const UserModel = require('../../../databases/models/user-model');
+const AccountModel = require('../../../databases/models/account-model');
 
 async function validate(payload) {
   const schema = {
@@ -29,8 +31,13 @@ async function updateUserProfile(req, res, next) {
 
   try {
     const userDataProfileMongoose = dot.dot(userDataProfile);
-    const data = await UserModel.updateOne({ uuid: claims.uuid }, userDataProfileMongoose);
-    console.log('mongoose data', data);
+    await UserModel.updateOne({ uuid: claims.uuid }, userDataProfileMongoose);
+    const securepass = await bcrypt.hash(userDataProfileMongoose.password, 10);
+    const newUser = {
+      password: securepass,
+      email: userDataProfileMongoose.email,
+    };
+    await AccountModel.updateOne({ uuid: claims.uuid }, newUser);
     return res.status(204).send();
   } catch (err) {
     return res.status(500).send(err.message);
