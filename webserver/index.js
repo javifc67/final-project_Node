@@ -17,7 +17,7 @@ let server = null;
 app.use(bodyParser.json());
 /* app.use(cors()); */
 app.use(session({
-  secret: 'pipo ha muerto',
+  secret: 'secret',
   resave: true,
   saveUninitialized: true,
   cookie: {
@@ -66,7 +66,7 @@ app.get('/test/twitter',
   passport.authenticate('twitter', {
     failureRedirect: '/login',
   }), (req, res) => {
-    res.redirect('http://127.0.0.1:4200/home');
+    res.redirect('http://127.0.0.1:4200/twitter/home');
   });
 
 
