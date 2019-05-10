@@ -1,19 +1,18 @@
 'use strict';
 
 
-const schedule = require('node-schedule');
 const express = require('express');
-const cors = require('cors');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const session = require('express-session');
 const routes = require('./routes/index');
 
 const app = express();
-require('./passport/twitter-auth');
 require('./passport/facebook-auth');
+require('./passport/twitter-auth');
 
 let server = null;
+
 app.use(bodyParser.json());
 /* app.use(cors()); */
 app.use(session({
@@ -59,30 +58,34 @@ app.use('/api', routes.accountRouter);
 app.use('/api', routes.userRouter);
 app.use('/api', routes.puaRouter);
 app.use('/api/twitter', routes.twRouter);
+app.use('/api/facebook', routes.fbRouter);
 
-app.get('/api/login/twitter', passport.authenticate('twitter', { state: 'pokpokpokpokpokpopok' }));
+app.get('/api/login/twitter', passport.authenticate('twitter', { state: 'state id' }));
 app.get('/test/twitter',
 
   passport.authenticate('twitter', {
     failureRedirect: '/login',
   }), (req, res) => {
-    res.redirect('http://127.0.0.1:4200/twitter/home');
+    res.redirect('http://localhost:4200/twitter/home');
   });
 
 
 app.get('/api/login/facebook',
-  passport.authenticate('facebook', { state: 'fakfkakafkakfakfaakffakfakfkfa' }));
+  passport.authenticate('facebook'));
 
 app.get('/auth/facebook/callback',
   passport.authenticate('facebook', {
     failureRedirect: '/login',
   }), (req, res) => {
-    res.redirect('http://127.0.0.1:4200/home');
+    res.redirect('http://localhost:4200/facebook');
   });
 
+app.get('/login', (req, res) => {
+  res.redirect('http://localhost:4200/login');
+});
 
 app.use('*', (req, res, next) => res.status(404).send({
-  message: 'SE SIENTE, TUS AMUGÜIS NO ESTAN AQUI',
+  message: 'esta ruta no existe o esta inactiva',
 }));
 
 /**

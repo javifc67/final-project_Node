@@ -3,25 +3,36 @@
 const passport = require('passport');
 const { Strategy } = require('passport-facebook');
 const PuaModel = require('../../databases/models/pua-model');
-const CurrentUserModel = require('../../databases/models/currentUser-model');
 
-passport.serializeUser((user, done) => {
-  done(null, user.id);
+passport.serializeUser((user, cb) => {
+  cb(null, user);
 });
 
-passport.deserializeUser(async(id, done) => {
-  const user = await PuaModel.find({ id });
-  done(null, user);
+passport.deserializeUser(async(obj, cb) => {
+  cb(null, obj);
 });
 
 passport.use(new Strategy({
   clientID: process.env.FACEBOOK_APP_ID,
   clientSecret: process.env.FACEBOOK_APP_SECRET,
-  callbackURL: 'http://localhost:8000/auth/facebook/callback',
+  callbackURL: '/auth/facebook/callback',
   passReqToCallback: true,
   state: true,
-},
-(accessToken, refreshToken, profile, cb) => {
-  console.log(profile, accessToken, refreshToken);
- /*  PuaModel.findOrCreate({ facebookId: profile.id  }, (err, user) => cb(err, user)); */
+}, async(req, accessToken, refreshToken, profile, cb) => {
+  const op = {
+    $set: {
+      'puas.$.token': accessToken,
+      'puas.$.refreshToken': refreshToken,
+      'puas.$.fbid': profile.id,
+    },
+  };
+  const filter = {
+    facebookName: profile.displayName,
+    'puas.name': 'facebook',
+  };
+
+  await PuaModel.findOneAndUpdate(filter, op);
+
+  /*  PuaModel.findOrCreate({ facebookId: profile.id  }, (err, user) => cb(err, user)); */
+  return cb(null, profile);
 }));

@@ -6,19 +6,31 @@ const bcrypt = require('bcrypt');
 
 const UserModel = require('../../../databases/models/user-model');
 const AccountModel = require('../../../databases/models/account-model');
+const PuaModel = require('../../../databases/models/pua-model');
 
 async function validate(payload) {
   const schema = {
-    fullName: Joi.string().min(3).max(128).required(),
-    email: Joi.string().min(3).max(128).required(),
-    password: Joi.string().min(3).max(128).required(),
+    twitterName: Joi.string().min(3).max(128),
+    fullName: Joi.string().min(3).max(128),
+    email: Joi.string().min(3).max(128),
+    password: Joi.string().min(3).max(128),
   };
 
   return Joi.validate(payload, schema);
 }
 
 async function updateUserProfile(req, res, next) {
-  const userDataProfile = { ...req.body };
+  let userDataProfile = { ...req.body };
+  console.log(userDataProfile);
+  if (userDataProfile.password === '') {
+    userDataProfile = {
+      fullName: userDataProfile.fullName,
+      twitterName: userDataProfile.twitterName,
+      email: userDataProfile.email,
+    };
+  }
+  console.log(userDataProfile);
+
   const { claims } = req;
   /**
    * 1. validator datos
@@ -31,13 +43,23 @@ async function updateUserProfile(req, res, next) {
 
   try {
     const userDataProfileMongoose = dot.dot(userDataProfile);
-    await UserModel.updateOne({ uuid: claims.uuid }, userDataProfileMongoose);
-    const securepass = await bcrypt.hash(userDataProfileMongoose.password, 10);
-    const newUser = {
-      password: securepass,
+
+    let newUser = {
       email: userDataProfileMongoose.email,
+      fullname: userDataProfileMongoose.fullName,
     };
+
+    if (userDataProfileMongoose.password !== undefined) {
+      await UserModel.updateOne({ uuid: claims.uuid }, userDataProfileMongoose);
+      const securepass = await bcrypt.hash(userDataProfileMongoose.password, 10);
+      newUser = {
+        password: securepass,
+        email: userDataProfileMongoose.email,
+        fullname: userDataProfileMongoose.fullName,
+      };
+    }
     await AccountModel.updateOne({ uuid: claims.uuid }, newUser);
+    await PuaModel.updateOne({ uuid: claims.uuid }, { twitterName: userDataProfileMongoose.twitterName });
     return res.status(204).send();
   } catch (err) {
     return res.status(500).send(err.message);

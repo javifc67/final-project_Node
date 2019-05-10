@@ -39,10 +39,11 @@ async function insertUserAccount(email, password) {
   }
 }
 
-async function insertPua(uuid, twitterName) {
+async function insertPua(uuid, twitterName, facebookName) {
   const data = {
     uuid,
     twitterName,
+    facebookName,
   };
   try {
     await PuaModel.create(data);
@@ -129,7 +130,7 @@ async function createAccount(req, res, next) {
 
     await createUser(uuid, email, password, fullName);
 
-    await insertPua(uuid, twitterNameFormated);
+    await insertPua(uuid, twitterNameFormated, fullName);
 
     // Generate verification code and send email
 

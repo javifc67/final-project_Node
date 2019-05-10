@@ -48,7 +48,7 @@ async function getTweets(req, res) {
         });
         const responseData = {
           userData: userData[0],
-          tweet,
+          tweets: tweets.reverse(),
         };
 
         res.status(200).send(responseData);

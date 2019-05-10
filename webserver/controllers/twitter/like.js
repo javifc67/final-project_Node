@@ -6,7 +6,6 @@ const PuaModel = require('../../../databases/models/pua-model');
 async function like(req, res) {
   const { claims } = req;
   const { tweetId } = { ...req.body };
-  const tweetIds = tweetId.toString();
 
   try {
     const filter = {
@@ -21,7 +20,7 @@ async function like(req, res) {
       access_token_key: keys.puas[0].token,
       access_token_secret: keys.puas[0].tokenSecret,
     });
-    client.post(`favorites/create/${tweetIds}`, (error, tweet, response) => {
+    client.post(`favorites/create/${tweetId}`, (error, tweet, response) => {
       if (!error) {
         console.log(tweet);
       } else {

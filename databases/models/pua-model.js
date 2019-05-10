@@ -11,6 +11,7 @@ const puaSchema = new Schema({
     unique: true,
   },
   twitterName: String,
+  facebookName: String,
   puas: {
     type: Array,
     default: [{
@@ -24,8 +25,9 @@ const puaSchema = new Schema({
     {
       name: 'facebook',
       url: 'https://www.facebook.com',
+      fbid: '',
       token: '',
-      tokenSecret: '',
+      refreshToken: '',
       visitCount: 0,
       userInfo: [ObjectId],
     }],

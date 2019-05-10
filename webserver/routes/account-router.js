@@ -10,7 +10,7 @@ const accountRouter = express.Router();
 
 accountRouter.post('/account', createAccount);
 accountRouter.get('/account/activate', activateAccount, (req, res) => {
-  res.redirect('http://127.0.0.1:4200/');
+  res.redirect('http://localhost:4200/');
 });
 
 // accountRouter.post('/account/login', login-first);

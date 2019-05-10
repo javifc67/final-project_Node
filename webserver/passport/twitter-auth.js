@@ -4,7 +4,6 @@ const passport = require('passport');
 const { Strategy } = require('passport-twitter');
 const PuaModel = require('../../databases/models/pua-model');
 const TwUserDataModel = require('../../databases/models/twitter.userData-model');
-const CurrentUserModel = require('../../databases/models/currentUser-model');
 
 passport.serializeUser((user, done) => {
   done(null, user.id);

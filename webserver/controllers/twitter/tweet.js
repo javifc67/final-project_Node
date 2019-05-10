@@ -12,7 +12,7 @@ async function postTweet(req, res, next) {
   if (date < h) {
     date = h;
   }
-  date.setSeconds(date.getSeconds() + 20);
+  date.setSeconds(date.getSeconds() + 3);
   try {
     const filter = {
       uuid: claims.uuid,
@@ -32,6 +32,26 @@ async function postTweet(req, res, next) {
       client.post('statuses/update', { status: data.message }, (error, tweet, response) => {
         if (error) {
           console.log(error);
+        } else {
+          const {
+            created_at,
+            id,
+            id_str,
+            text,
+            user,
+            retweet_count,
+            favorite_count,
+          } = tweet;
+          const tweetFormated = {
+            created_at,
+            id,
+            id_str,
+            text,
+            user,
+            retweet_count,
+            favorite_count,
+          };
+          res.status(200).send(tweetFormated);
         }
       });
     });

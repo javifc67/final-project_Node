@@ -3,7 +3,7 @@
 const Twitter = require('twitter');
 const PuaModel = require('../../../databases/models/pua-model');
 
-async function retweet(req, res) {
+async function unretweet(req, res) {
   const { claims } = req;
   const { tweetId } = { ...req.body };
   const tweetIds = tweetId.toString();
@@ -21,27 +21,10 @@ async function retweet(req, res) {
       access_token_key: keys.puas[0].token,
       access_token_secret: keys.puas[0].tokenSecret,
     });
-    client.post(`statuses/retweet/${tweetIds}`, (error, tweet, response) => {
+    client.post(`statuses/unretweet/${tweetIds}`, (error, tweet, response) => {
       if (!error) {
-        const {
-          created_at,
-          id,
-          id_str,
-          text,
-          user,
-          retweet_count,
-          favorite_count,
-        } = tweet;
-        const tweetFormated = {
-          created_at,
-          id,
-          id_str,
-          text,
-          user,
-          retweet_count,
-          favorite_count,
-        };
-        res.status(200).send(tweetFormated);
+        console.log(tweet);
+        res.status(200).send(tweet);
       } else {
         console.error(error);
       }
@@ -51,4 +34,4 @@ async function retweet(req, res) {
   }
 }
 
-module.exports = retweet;
+module.exports = unretweet;
